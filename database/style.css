@@ -1,0 +1,88 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    width: 60%;
+    margin: auto;    
+}
+
+fieldset {
+    border: 1px solid black;
+    padding: 0.5em;    
+    margin: 0 0 1em;
+}
+
+input, button {
+    font-size: 1em;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em auto;
+}
+
+th, td {
+    border: 1px solid black;
+    padding: 0.5em;
+    margin: 0;    
+}
+
+a.button {
+    text-decoration: none;
+}
+
+table tbody .symbol, table tbody .actions, table tbody .center {
+    text-align: center;
+}
+
+table tbody .symbol {
+    width: 2em;
+}
+
+table tbody .actions {
+    width: 8em;
+}
+
+.alert {
+    position: relative;
+    padding: .75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+}
+
+.alert-success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+.alert-error {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+#create label, #edit label, #view label {
+    display: block;
+    margin-top: 0.5em;
+}
+
+#create input, #edit input, #view input, #edit button, nav button {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.5em;
+}
+
+#create [type="submit"], #edit [value="delete"] {
+    margin-top: 1em;
+}
+
+label.required:before {
+    content: "* ";
+    color: red;
+}
+
+p.required {
+    font-size: 0.75em;
+    color: red;
+}
