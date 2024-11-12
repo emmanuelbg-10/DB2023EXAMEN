@@ -13,13 +13,12 @@
             $stmtInsertCategory = $conn->prepare("INSERT INTO category (category_id, name, last_update) VALUES (NULL, :name,CURRENT_TIMESTAMP)");
             $stmtInsertCategory->bindParam(':name', $name, PDO::PARAM_STR);
             $stmtInsertCategory->execute();
-            echo "<p class='alert alert-success'>Usuario creado satisfactoriamente!</p>";
+            echo "<p class='alert alert-success'>Categoria creada satisfactoriamente!</p>";
         } catch (Exception $e) {
             echo "<p class=' alert alert-error'>¡No se ha podido crear al usuario!</p>";
             die('Se jodio ' . $e->getMessage());
         }
 
-        include "bottom.php";
     } else {
 
     ?>
@@ -35,5 +34,5 @@
             </fieldset>
         </form>
 </section>
-<?php include "bottom.php";
-    } ?>
+<?php } ?>
+<?php include "bottom.php"; ?>

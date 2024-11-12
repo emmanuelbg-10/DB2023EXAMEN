@@ -7,21 +7,16 @@
 
 <section id="films">
   <h2>Peliculas</h2>
-  <form action="film.php" method="get">
-    <fieldset>
-      <legend>Categorías</legend>
-      <select name="category" id="">
-        <option selected disabled>Elige una categoría</option>
-
-        <?php
+  <?php
         if (isset($_GET['delete']) &&(!empty($_GET['category']))) {
           $categoria = $_GET['category'];
           $stmtDeleteCategory = $conn->prepare("DELETE FROM category WHERE category.category_id = :category");
           $stmtDeleteCategory->bindParam(':category', $categoria);
           try {
             $stmtDeleteCategory->execute();
+            echo "<p class=' alert alert-success'>¡Categoria borrada correctamente!</p>";
           } catch (PDOException $e) {
-            echo "<p class=' alert alert-error'>¡No se ha podido borrar la categoria porque ya tiene peliculas AA!</p>";
+            echo "<p class=' alert alert-error'>¡No se ha podido borrar la categoria porque ya tiene peliculas!</p>";
           }
           
           $stmtDeleteCategory = null;
@@ -29,6 +24,13 @@
       
         ?>
 
+  <form action="film.php" method="get">
+    <fieldset>
+      <legend>Categorías</legend>
+      <select name="category" id="">
+        <option selected disabled>Elige una categoría</option>
+
+       
 
         
         <?php
