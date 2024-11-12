@@ -22,6 +22,7 @@
     } else {
 
     ?>
+    
         <form action="create.php" autocomplete="off">
             <fieldset>
                 <legend>Datos de la categoría</legend>

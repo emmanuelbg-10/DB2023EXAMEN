@@ -7,12 +7,12 @@
 <section id="films">
   <form action="category_film.php" method="post">
     <?php
-    if (isset($_GET['name'])) {
-      printf("<input type='hidden' name='name' value='%s'>", $_GET['name']);
-      $name= $_GET['name'];
-    } elseif (isset($_POST['name'])) {
-      $name= $_POST['name'];
-    }
+      if (isset($_GET['name'])) {
+        $name= $_GET['name'];
+      } elseif (isset($_POST['name'])) {
+        $name= $_POST['name'];  
+  }
+    printf("<input type='hidden' name='name' value='%s'>", $name);
     printf("<h2>Categorías de la pelicula: %s</h2>", $name);
     ?>
 
