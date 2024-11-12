@@ -8,22 +8,25 @@
   <form action="category_film.php" method="post">
     <?php
     if (isset($_GET['name'])) {
-      $stmtShowName = $conn->prepare("SELECT title from film where title = :name");
-      $stmtShowName->bindParam(':name', $_GET['name'], PDO::PARAM_STR);
-      $stmtShowName->execute();
-      $film = $stmtShowName->fetchObject();
       printf("<input type='hidden' name='name' value='%s'>", $_GET['name']);
-      printf("<h2>Categorías de la pelicula: %s</h2>", $film->title);
+      printf("<h2>Categorías de la pelicula: %s</h2>", $_GET['name']);
     } elseif (isset($_POST['name'])) {
       printf("<h2>Categorías de la pelicula: %s</h2>", $_POST['name']);
     }
     ?>
 
     <?php
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'])) {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       try {
         $conn->beginTransaction();
-        $name = $_POST['name'];
+        if (isset($_POST['name'])) {
+          $name = $_POST['name'];
+        } elseif (isset($_GET['name'])) {
+          $name = $_GET['name'];
+        } else {
+          throw new Exception("No se encontro el nombre de la pelicula");
+        }
+
         // Obtener el film_id de la película
         $stmtIds = $conn->prepare("SELECT film_id FROM film WHERE title = :title");
         $stmtIds->bindParam(':title', $name, PDO::PARAM_STR);
