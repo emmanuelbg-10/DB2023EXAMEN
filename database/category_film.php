@@ -1,9 +1,6 @@
 <?php include "top.php"; ?>
 <?php require "connection.php" ?>
-<!--
-    <div class="alert alert-success">¡Ejemplo mensaje de éxito!</div>
-    <div class="alert alert-error">¡Ejemplo mensaje de error!</div>
-    -->
+
 <nav>
   <p><a href="film.php">Volver</a></p>
 </nav>
@@ -11,60 +8,22 @@
   <form action="category_film.php" method="post">
     <?php
     if (isset($_GET['name'])) {
-
       $stmtShowName = $conn->prepare("SELECT title from film where title = :name");
       $stmtShowName->bindParam(':name', $_GET['name'], PDO::PARAM_STR);
       $stmtShowName->execute();
-
       $film = $stmtShowName->fetchObject();
-
-      // $film_id = $film->film_id;
-      // $filmcategory_id = $film->category_id;
-
       printf("<input type='hidden' name='name' value='%s'>", $_GET['name']);
-
       printf("<h2>Categorías de la pelicula: %s</h2>", $film->title);
     } elseif (isset($_POST['name'])) {
       printf("<h2>Categorías de la pelicula: %s</h2>", $_POST['name']);
     }
     ?>
 
-    <ul>
-
-      <?php
-
-      try {
-        $stmtShowCategory = $conn->prepare("SELECT category_id, name FROM category;");
-        $stmtShowCategory->execute();
-
-        $categorias = $stmtShowCategory->fetchAll(PDO::FETCH_OBJ);
-
-        foreach ($categorias as $categoria) {
-          // if (isset($_POST["$categoria->name"]) && $_POST["$categoria->name"] == 'on') {
-          //   echo "HOLAA";
-          // }
-          echo "<li>";
-          printf("<label><input type='checkbox' name='%s' id='%d'>%s</label>", $categoria->name, $categoria->category_id, $categoria->name);
-          echo "</li>";
-        }
-        $stmtShowCategory = null;
-        $categorias = null;
-      } catch (PDOException $e) {
-        die('Se jodio PDO: ' . $e->getMessage());
-      } catch (Exception $e) {
-        die('Se jodio: ' . $e->getMessage());
-      }
-
+    <?php
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'])) {
       try {
         $conn->beginTransaction();
-        if (isset($_POST['name'])) {
-          $name = $_POST['name'];
-        } elseif (isset($_GET['name'])) {
-          $name = $_GET['name'];
-        } else {
-          throw new Exception("Nombre de pelicula no encontrado");
-        }
-
+        $name = $_POST['name'];
         // Obtener el film_id de la película
         $stmtIds = $conn->prepare("SELECT film_id FROM film WHERE title = :title");
         $stmtIds->bindParam(':title', $name, PDO::PARAM_STR);
@@ -92,11 +51,34 @@
         }
 
         $conn->commit();
+        // Mostrar mensaje de éxito solo si se procesa correctamente
+        echo "<div class='alert alert-success'>¡Categorias actualizadas!</div>";
       } catch (PDOException $e) {
         $conn->rollBack();
-        die('Se jodio PDO: ' . $e->getMessage());
+        echo "<div class='alert alert-error'>Error al actualizar las categorías: " . $e->getMessage() . "</div>";
       } catch (Exception $e) {
         $conn->rollBack();
+        echo "<div class='alert alert-error'>Error: " . $e->getMessage() . "</div>";
+      }
+    }
+    ?>
+    <ul>
+      <?php
+      try {
+        $stmtShowCategory = $conn->prepare("SELECT category_id, name FROM category;");
+        $stmtShowCategory->execute();
+        $categorias = $stmtShowCategory->fetchAll(PDO::FETCH_OBJ);
+
+        foreach ($categorias as $categoria) {
+          echo "<li>";
+          printf("<label><input type='checkbox' name='%s' id='%d'>%s</label>", $categoria->name, $categoria->category_id, $categoria->name);
+          echo "</li>";
+        }
+        $stmtShowCategory = null;
+        $categorias = null;
+      } catch (PDOException $e) {
+        die('Se jodio PDO: ' . $e->getMessage());
+      } catch (Exception $e) {
         die('Se jodio: ' . $e->getMessage());
       }
       ?>
