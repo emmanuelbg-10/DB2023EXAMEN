@@ -12,6 +12,25 @@
       <legend>Categorías</legend>
       <select name="category" id="">
         <option selected disabled>Elige una categoría</option>
+
+        <?php
+        if (isset($_GET['delete']) &&(!empty($_GET['category']))) {
+          $categoria = $_GET['category'];
+          $stmtDeleteCategory = $conn->prepare("DELETE FROM category WHERE category.category_id = :category");
+          $stmtDeleteCategory->bindParam(':category', $categoria);
+          try {
+            $stmtDeleteCategory->execute();
+          } catch (PDOException $e) {
+            echo "<p class=' alert alert-error'>¡No se ha podido borrar la categoria porque ya tiene peliculas AA!</p>";
+          }
+          
+          $stmtDeleteCategory = null;
+        }
+      
+        ?>
+
+
+        
         <?php
         try {
           $stmtCategories = $conn->prepare("SELECT category_id, name FROM category");
@@ -90,30 +109,9 @@
           $stmtTable = null;
           $categoria = null;
         }
-
-
-        if (isset($_GET['delete']) &&(!empty($_GET['category']))) {
-          $categoria = $_GET['category'];
-          $stmtTable = $conn->prepare("SELECT film.film_id, film.title, film.release_year, film.length FROM film, film_category WHERE film.film_id = film_category.film_id AND film_category.category_id = :category_id;");
-          $stmtTable->bindParam(':category_id', $categoria, PDO::PARAM_INT);
-          echo $categoria;
-          $stmtTable->execute();
-
-          if(!$stmtTable->rowCount() === 0){
-            echo "<p class=' alert alert-error'>¡No se ha podido borrar la categoria porque ya tiene peliculas AA!</p>";
-            echo $stmtTable->rowCount();
-          }else{
-          $stmtDeleteCategory = $conn->prepare("DELETE FROM category WHERE category.category_id = :category");
-          $stmtDeleteCategory->bindParam(':category', $categoria);
-          $stmtDeleteCategory->execute();
-          $stmtDeleteCategory = null;
-        }}
-      
-
       } catch (Exception $e) {
         die('liada: ' . $e->getMessage());
       }
-
 
       ?>
 
