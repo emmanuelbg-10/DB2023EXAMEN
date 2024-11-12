@@ -9,23 +9,19 @@
     <?php
     if (isset($_GET['name'])) {
       printf("<input type='hidden' name='name' value='%s'>", $_GET['name']);
-      printf("<h2>Categorías de la pelicula: %s</h2>", $_GET['name']);
+      $name= $_GET['name'];
     } elseif (isset($_POST['name'])) {
-      printf("<h2>Categorías de la pelicula: %s</h2>", $_POST['name']);
+      $name= $_POST['name'];
     }
+    printf("<h2>Categorías de la pelicula: %s</h2>", $name);
     ?>
 
     <?php
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['name'])) {
       try {
         $conn->beginTransaction();
-        if (isset($_POST['name'])) {
           $name = $_POST['name'];
-        } elseif (isset($_GET['name'])) {
-          $name = $_GET['name'];
-        } else {
-          throw new Exception("No se encontro el nombre de la pelicula");
-        }
+        
 
         // Obtener el film_id de la película
         $stmtIds = $conn->prepare("SELECT film_id FROM film WHERE title = :title");
@@ -79,9 +75,7 @@
         }
         $stmtShowCategory = null;
         $categorias = null;
-      } catch (PDOException $e) {
-        die('Se jodio PDO: ' . $e->getMessage());
-      } catch (Exception $e) {
+       } catch (Exception $e) {
         die('Se jodio: ' . $e->getMessage());
       }
       ?>

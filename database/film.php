@@ -74,6 +74,7 @@
           if ($stmtTable->rowCount() === 0) {
             print("<h1>No hay películas para esta categoría</h1>");
           }
+          
 
           $nombrePeliculasPorIdCategoria =  $stmtTable->fetchAll(PDO::FETCH_OBJ);
 
@@ -90,21 +91,27 @@
           $categoria = null;
         }
 
-        if (isset($_GET['delete']) && !empty(!empty($_GET['category']))) {
+
+        if (isset($_GET['delete']) &&(!empty($_GET['category']))) {
           $categoria = $_GET['category'];
+          $stmtTable = $conn->prepare("SELECT film.film_id, film.title, film.release_year, film.length FROM film, film_category WHERE film.film_id = film_category.film_id AND film_category.category_id = :category_id;");
+          $stmtTable->bindParam(':category_id', $categoria, PDO::PARAM_INT);
+          echo $categoria;
+          $stmtTable->execute();
+
+          if(!$stmtTable->rowCount() === 0){
+            echo "<p class=' alert alert-error'>¡No se ha podido borrar la categoria porque ya tiene peliculas AA!</p>";
+            echo $stmtTable->rowCount();
+          }else{
           $stmtDeleteCategory = $conn->prepare("DELETE FROM category WHERE category.category_id = :category");
           $stmtDeleteCategory->bindParam(':category', $categoria);
           $stmtDeleteCategory->execute();
           $stmtDeleteCategory = null;
-        }
-      } catch (PDOException $e) {
-        if ($e->getMessage() === "SQLSTATE[23000]: Integrity constraint violation: 1451 Cannot delete or update a parent row: a foreign key constraint fails (`filmdb`.`film_category`, CONSTRAINT `fk_film_category_category` FOREIGN KEY (`category_id`) REFERENCES `category` (`category_id`) ON DELETE RESTRICT ON UPDATE CASCADE)") {
-          echo "<p class=' alert alert-error'>¡No se ha podido borrar la categoria porque ya tiene peliculas!</p>";
-        } else {
-          die('liada: ' . $e->getMessage());
-        }
+        }}
+      
+
       } catch (Exception $e) {
-        die('Se jodio2: ' . $e->getMessage());
+        die('liada: ' . $e->getMessage());
       }
 
 
