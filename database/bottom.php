@@ -1,6 +1,7 @@
     <footer>
         <hr>
-        <small>[Nombre] [Apellidos] | Examen Tema 3</small>
+        <small>[Emmanuel] [Barral Giraldo] | Examen Tema 3</small>
     </footer>
-</body>
-</html>
+    </body>
+
+    </html>
