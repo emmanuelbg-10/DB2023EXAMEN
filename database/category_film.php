@@ -7,11 +7,11 @@
 <section id="films">
   <form action="category_film.php" method="post">
     <?php
-      if (isset($_GET['name'])) {
-        $name= $_GET['name'];
-      } elseif (isset($_POST['name'])) {
-        $name= $_POST['name'];  
-  }
+    if (isset($_GET['name'])) {
+      $name = $_GET['name'];
+    } elseif (isset($_POST['name'])) {
+      $name = $_POST['name'];
+    }
     printf("<input type='hidden' name='name' value='%s'>", $name);
     printf("<h2>Categorías de la pelicula: %s</h2>", $name);
     ?>
@@ -20,8 +20,6 @@
     if (isset($_POST['name'])) {
       try {
         $conn->beginTransaction();
-          $name = $_POST['name'];
-        
 
         // Obtener el film_id de la película
         $stmtIds = $conn->prepare("SELECT film_id FROM film WHERE title = :title");
@@ -68,14 +66,31 @@
         $stmtShowCategory->execute();
         $categorias = $stmtShowCategory->fetchAll(PDO::FETCH_OBJ);
 
+        $stmtShowChecked = $conn->prepare("SELECT category.name FROM film INNER JOIN film_category On film_category.film_id = film.film_id INNER JOIN category On category.category_id = film_category.category_id WHERE film.title = :name;");
+        $stmtShowChecked->bindParam(':name', $name, PDO::PARAM_STR);
+        $stmtShowChecked->execute();
+        $categoriasYaExistentes =  $stmtShowChecked->fetchAll(PDO::FETCH_OBJ);
+
+        //creamos un array de las categorias existentes
+        $categoriasExistentesPorNombre = [];
+
+        foreach ($categoriasYaExistentes as $checked) {
+          //metes los datos en ese array
+          $categoriasExistentesPorNombre[$checked->name] = $checked;
+        }
+
+
         foreach ($categorias as $categoria) {
+          //comprobamos si esa pelicula tiene esa categoria, si es asi checked si no nada 
+          $checkedAttr = isset($categoriasExistentesPorNombre[$categoria->name]) ? 'checked' : '';
           echo "<li>";
-          printf("<label><input type='checkbox' name='%s' id='%d'>%s</label>", $categoria->name, $categoria->category_id, $categoria->name);
+          printf("<label><input type='checkbox' name='%s' id='%d' %s>%s</label>", $categoria->name, $categoria->category_id,  $checkedAttr, $categoria->name);
           echo "</li>";
         }
+
         $stmtShowCategory = null;
         $categorias = null;
-       } catch (Exception $e) {
+      } catch (Exception $e) {
         die('Se jodio: ' . $e->getMessage());
       }
       ?>
